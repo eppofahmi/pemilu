@@ -1,2 +1,2 @@
 # Peimlu
-Dashboard untuk memantai hasil pemilu di indonesia
+Dashboard untuk memantau hasil pemilu di indonesia
