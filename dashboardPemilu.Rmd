@@ -1,0 +1,462 @@
+---
+title: "Pemilihan Umum di Indonesia"
+output: 
+  flexdashboard::flex_dashboard:
+    social: [ "twitter", "facebook", "menu" ]
+    orientation: columns
+    vertical_layout: fill
+    favicon: hand-holding-vote-paper.png
+    theme: yeti
+runtime: shiny
+---
+
+<style>                     
+.navbar {
+  background-color:#292727;
+  border-color:"#1C6B99";
+}
+.navbar-brand {
+color:#1C6B99;
+.navbar-inverse {
+  background-color: #2780e3;
+  border-color: #1967be;
+}
+}
+</style> 
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(highcharter)
+library(formattable)
+library(shinyalert)
+library(tidyverse)
+library(shinyjs)
+library(shinyBS)
+library(shiny)
+library(DT)
+```
+
+
+```{r global, include=FALSE}
+# data 1
+dana_pilkada <- readRDS("dana_pilkada.rds")
+
+# data 2
+pilpres <- read_delim("pilpres.csv", ",", 
+    escape_double = FALSE)
+
+# data 3
+# suara_partai <- read_csv("suara_partai.csv", 
+#     trim_ws = FALSE)
+```
+
+LandingPage {.hidden data-orientation="rows"}
+=======================================================================
+
+SideDK {data-height=190}
+-----------------------------------------------------------------------
+
+<div style="width:808; height:900">
+![](/Volumes/mydata/rSkilss/campaignABtest/lp.png)
+</div>
+
+Pilpres 2014 {data-orientation="rows" data-icon="glyphicon-folder-close"}
+===============================================================================
+
+Area 1 {data-height=200}
+-------------------------------------------------------------------------------------------
+
+### {data-width=200 data-height=350}
+
+```{r signifikansi}
+prabowo12 <- reactive({
+  if (input$wilayah == "Indonesia") {
+    persentase_joko <- 100
+  }
+  else {
+    persentase_joko <- pilpres %>%
+      filter(prov.asli == as.character(input$wilayah)) %>%
+      filter(capres == "Jokowi") %>%
+      select(sig.wil) %>%
+      round(2)
+    
+    persentase_joko <- persentase_joko$sig.wil
+  }
+  
+})
+
+
+renderGauge(
+  gauge(prabowo12(), min = 0, max = 20, symbol = "%", label = "Sig.Wil",
+      sectors = gaugeSectors(success = c(10, 20), warning = c(5, 9), danger = c(0, 4),
+                             colors = c("green", "purple", "orange")))
+)
+```
+
+### {data-width=200 data-height=350}
+
+```{r joko}
+Jokwoi <- reactive({
+  if (input$wilayah == "Indonesia") {
+    persentase_joko <- pilpres %>%
+      filter(capres == "Jokowi") %>%
+      mutate(rata_rata = mean(persen)) %>%
+      distinct(rata_rata) %>%
+      round(2)
+    
+    persentase_joko <- persentase_joko$rata_rata
+  }
+  else {
+    persentase_joko <- pilpres %>%
+      filter(capres == "Jokowi") %>%
+      filter(prov.asli == as.character(input$wilayah))
+
+    persentase_joko <- persentase_joko$persen
+  }
+  
+})
+
+renderGauge(
+  gauge(Jokwoi(), min = 0, max = 100, symbol = "%", label = "Jokowi",
+      sectors = gaugeSectors(success = c(50, 100), warning = c(30, 49), danger = c(0, 29),
+                             colors = c("red", rgb(0, 1, 0), "#5C5C5C")))
+)
+```
+
+### {data-width=200 data-height=350}
+
+```{r wowo}
+prabowo <- reactive({
+  if (input$wilayah == "Indonesia") {
+    persentase_joko <- pilpres %>%
+      filter(capres == "Prabowo") %>%
+      mutate(rata_rata = mean(persen)) %>%
+      distinct(rata_rata) %>%
+      round(2)
+    
+    persentase_joko <- persentase_joko$rata_rata
+  }
+  else {
+    persentase_joko <- pilpres %>%
+      filter(capres == "Prabowo") %>%
+      filter(prov.asli == as.character(input$wilayah))
+
+    persentase_joko <- persentase_joko$persen
+  }
+  
+})
+
+renderGauge(
+  gauge(prabowo(), min = 0, max = 100, symbol = "%", label = "Prabowo",
+      sectors = gaugeSectors(success = c(50, 100), warning = c(30, 49), danger = c(0, 29),
+                             colors = c("blue", rgb(0, 1, 0), "#5C5C5C")))
+)
+```
+
+### {data-width=200 data-height=350}
+
+```{r participation}
+prabowo1 <- reactive({
+  if (input$wilayah == "Indonesia") {
+    persentase_joko <- pilpres %>%
+      # filter(capres == "Prabowo") %>%
+      mutate(rata_rata = mean(partisipasi)) %>%
+      distinct(rata_rata) %>%
+      round(2)
+    
+    persentase_joko <- persentase_joko$rata_rata
+  }
+  else {
+    persentase_joko <- pilpres %>%
+      # filter(capres == "Prabowo") %>%
+      filter(prov.asli == as.character(input$wilayah)) %>%
+      distinct(partisipasi)
+
+    persentase_joko <- persentase_joko$partisipasi
+  }
+  
+})
+
+renderGauge(
+  gauge(prabowo1(), min = 0, max = 100, symbol = "%", label = "Partisipasi",
+      sectors = gaugeSectors(success = c(50, 100), warning = c(30, 49), danger = c(0, 29),
+                             colors = c("black", rgb(0, 1, 0), "#1C0A0A")))
+)
+```
+
+### {data-width=200 data-height=350}
+
+```{r}
+selectInput("wilayah", "Pilih/tulis data yang ingin dilihat", 
+            choices = c("Indonesia", unique(pilpres$prov.asli)), selected = "Indonesia")
+```
+
+Baca Keterangan
+
+Plot {data-height=800}
+-------------------------------------------------------------------------------------------
+
+### {data-width=700 data-height=650}
+
+<iframe src="https://canggihpw.github.io/pilpres/" 
+    style="width:900px; height:800px; border: 0.2px solid white;"></iframe>
+
+### {data-width=300 data-height=650}
+
+```{r}
+renderHighchart({
+  if (input$wilayah == "Indonesia") {
+    plotdata <- pilpres
+    
+    plotdata %>%
+      hchart("bar", hcaes(x = provinsi, y = suara, group = capres,
+                          color = warna)) %>%
+      hc_add_theme(hc_theme_smpl()) %>%
+      hc_plotOptions(series = list(stacking = "normal")) %>%
+      hc_legend(enabled = FALSE) %>%
+      hc_exporting(enabled = TRUE) %>%
+      hc_credits(enabled = TRUE, text = paste0("Sumber: https//:myeda.info, diakses pada: ", 
+                                               as.character(Sys.Date())),
+                 href = "http://myeda.info/") %>%
+      hc_title(text = "Perolehan Suara per Provinsi",
+               margin = 20, align = "left",
+               style = list(color = "#1C0A0A", useHTML = TRUE))
+    
+  }
+  else {
+    plotdata <- pilpres %>%
+      filter(prov.asli == as.character(input$wilayah))
+
+    plotdata %>%
+      hchart("column", hcaes(x = capres, y = suara,
+                          color = warna)) %>%
+      hc_add_theme(hc_theme_smpl()) %>%
+      hc_plotOptions(series = list(stacking = "normal")) %>%
+      hc_legend(enabled = FALSE) %>%
+      hc_exporting(enabled = TRUE) %>%
+      hc_credits(enabled = TRUE, text = paste0("Sumber: https//:myeda.info, diakses pada: ", 
+                                               as.character(Sys.Date())),
+                 href = "http://myeda.info/") %>%
+      hc_title(text = paste0("Perolehan Suara Capres di Prov. ", as.character(input$wilayah)),
+               margin = 20, align = "left",
+               style = list(color = "#1C0A0A", useHTML = TRUE))
+  }
+})
+```
+
+Pilkada 2017 {data-orientation="rows" data-icon="glyphicon-usd"}
+=======================================================================
+
+SideDK {data-height=100}
+-------------------------------------------------------------------------------------------
+
+```{r}
+# input ------------------------------------------------------------------------
+selectInput(inputId = "pilkada", label = "Dana kampanye untuk menjadi...", 
+            choices = c("BUPATI/WALIKOTA" = "kabupaten", "GUBERNUR" = "provinsi"), 
+            selected = "provinsi")
+
+# filter  1 --------------------------------------------------------------------
+conditionalPanel(condition = "input.pilkada == 'kabupaten'", 
+                 selectInput("filkab", "di Provinsi...", 
+                             choices = c("ALL", dana_pilkada[["kabupaten"]][["Provinsi"]]), 
+                             selected = "ALL")
+                 )
+# filter  2---------------------------------------------------------------------
+conditionalPanel(condition = "input.pilkada == 'provinsi'", 
+                 selectInput("filprov", "Paslon di provinsi...", 
+                             choices = c("ALL", dana_pilkada[["provinsi"]][["Provinsi"]]), 
+                             selected = "ALL")
+                 )
+```
+
+PlotDK {data-height=800}
+----------------------------------------------------------------------------------
+### 
+```{r}
+# visualisasi --------------------------------------------------------------------
+renderHighchart({
+  if (input$pilkada == "kabupaten") {
+    df1 <- dana_pilkada[["kabupaten"]]
+    # data
+    if (input$filkab == "ALL") {
+      df1 <- df1
+      
+      # visual - rata2 untuk menjad bupati/walikota per provinsi
+      df1 %>%
+        group_by(Provinsi) %>%
+        summarise(`Rata-rata per Provinsi` = mean(`Jml Pengeluaran LPPDK`)) %>%
+        arrange(desc(`Rata-rata per Provinsi`)) %>%
+        hchart("bar", hcaes(x = Provinsi, y = `Rata-rata per Provinsi`, 
+                            color = Provinsi)) %>%
+        hc_add_theme(hc_theme_monokai()) %>%
+        hc_plotOptions(series = list(stacking = "normal")) %>%
+        hc_legend(enabled = FALSE) %>%
+        hc_exporting(enabled = TRUE, filename =  as.character(paste0(input$pilkada, "-", 
+                                                                    input$filkab)))
+    } 
+    else {
+      df1 <- df1 %>%
+        filter(Provinsi == as.character(input$filkab))
+      
+      # visual - rata2 untuk menjad bupati/walikota per kabupaten
+      df1 %>%
+        group_by(Kabupaten, Paslon) %>%
+        summarise(`Total pengeluaran dana kampanye` = sum(`Jml Pengeluaran LPPDK`)) %>%
+        arrange(desc(`Total pengeluaran dana kampanye`)) %>%
+        # vis
+        hchart("bar", hcaes(x = Kabupaten, y = `Total pengeluaran dana kampanye`, 
+                            group = Paslon, color = Paslon)) %>%
+        hc_add_theme(hc_theme_monokai()) %>%
+        hc_plotOptions(series = list(stacking = "normal")) %>%
+        hc_legend(enabled = FALSE) %>%
+        hc_exporting(enabled = TRUE, filename =  as.character(paste0(input$pilkada, "-", 
+                                                                    input$filkab)))
+    }
+    }
+  
+  # dana kampanye gubernur/provinsi
+  else {
+    df1 <- dana_pilkada[["provinsi"]]
+    # data
+    if (input$filprov == "ALL") {
+      df1 <- df1
+      df1 %>%
+        group_by(Provinsi, Paslon) %>%
+        summarise(`Total pengeluaran dana kampanye` = sum(`Jml Pengeluaran LPPDK`)) %>%
+        arrange(desc(`Total pengeluaran dana kampanye`)) %>%
+        hchart("bar", hcaes(x = Provinsi, y = `Total pengeluaran dana kampanye`, 
+                            group = Paslon, color = Paslon)) %>%
+        hc_add_theme(hc_theme_monokai()) %>%
+        hc_plotOptions(series = list(stacking = "normal")) %>%
+        hc_legend(enabled = FALSE) %>%
+        hc_exporting(enabled = TRUE, filename = as.character(paste0(input$pilkada, "-", 
+                                                                    input$filprov)))
+    } 
+    else {
+      df1 <- df1 %>%
+        filter(Provinsi == as.character(input$filprov))
+      
+      df1 %>%
+        group_by(Paslon) %>%
+        summarise(`Total pengeluaran dana kampanye` = sum(`Jml Pengeluaran LPPDK`)) %>%
+        arrange(desc(`Total pengeluaran dana kampanye`)) %>%
+        hchart("bar", hcaes(x = Paslon, y = `Total pengeluaran dana kampanye`, 
+                            color = Paslon)) %>%
+        hc_add_theme(hc_theme_monokai()) %>%
+        hc_legend(enabled = FALSE) %>%
+        hc_exporting(enabled = TRUE, filename =  as.character(paste0(input$pilkada, "-", 
+                                                                    input$filprov)))
+    }
+    }
+})
+```
+
+
+KetDK {data-height=100}
+-------------------------------------------------------------------------------------------
+
+###
+
+```{r}
+# Rata bupati per provinsi
+rata1 <- reactive({
+  RataBupNas <- dana_pilkada[["kabupaten"]]
+  
+  RataBupNas <- RataBupNas %>%
+    select(Provinsi, `Jml Pengeluaran LPPDK`) %>%
+    group_by(Provinsi) %>%
+    mutate(`Rata-rata` = mean(`Jml Pengeluaran LPPDK`)) %>%
+    select(Provinsi, `Rata-rata`) %>%
+    filter(Provinsi == as.character(input$filkab)) %>%
+    distinct()
+  
+  RataBupNas <- currency(RataBupNas$`Rata-rata`, symbol = "Rp. ")
+})
+
+
+# Rata gubernuer per provinsi
+rata2 <- reactive({
+  RataGubNas <- dana_pilkada[["provinsi"]]
+  
+  RataGubNas <- RataGubNas %>%
+    select(Provinsi, `Jml Pengeluaran LPPDK`) %>%
+    group_by(Provinsi) %>%
+    mutate(`Rata-rata` = mean(`Jml Pengeluaran LPPDK`)) %>%
+    select(Provinsi, `Rata-rata`) %>%
+    filter(Provinsi == as.character(input$filprov)) %>%
+    distinct()
+  
+  RataGubNas <- currency(RataGubNas$`Rata-rata`, symbol = "Rp. ")
+})
+
+# -----------------------------------------------------------------------------
+
+renderText({
+  if (input$pilkada == "kabupaten") {
+    if (input$filkab == "ALL") {
+      paste0("Rata-rata dana kampanye yang dikeluarkan setiap PASLON 
+             (Pasangan Calon) Bupati/Walikota dan Wakilnya di Indonesia 
+             pada tahun 2017 adalah: Rp. 1,237,101,605.00")
+    }
+    else {
+      paste0("Rata-rata dana kampanye yang dikeluarkan setiap PASLON 
+             (Pasangan Calon) Bupati/Walikota dan Wakilnya di Provinsi ", 
+             as.character(input$filkab), " pada tahun 2017 adalah: ", 
+             as.character(rata1()))
+    }
+  }
+  else {
+    if (input$filprov == "ALL") {
+      paste0("Rata-rata dana kampanye yang dikeluarkan setiap PASLON (Pasangan Calon)
+             Gubernur dan Wakilnya di Indonesia pada tahun 2017 adalah: Rp. 
+             12,641,069,502.00")
+    }
+    else {
+      paste0("Rata-rata dana kampanye yang dikeluarkan setiap PASLON (Pasangan Calon)
+             Gubernur dan Wakilnya di ", as.character(input$filprov), 
+             " pada tahun 2017 adalah: ", as.character(rata2()))
+    }
+  }
+})
+```
+
+Sumber Data {data-orientation="rows" data-icon="glyphicon-th-list"}
+===========================================================================================
+
+inputTable {data-height=100}
+-------------------------------------------------------------------------------------------
+
+```{r}
+selectInput(inputId = "pilkada1", label = "Dana kampanye untuk menjadi...", 
+            choices = c("BUPATI/WALIKOTA" = "kabupaten", "GUBERNUR" = "provinsi"), 
+            selected = "provinsi")
+```
+
+visTable {data-height=800}
+-------------------------------------------------------------------------------------------
+
+###
+```{r}
+# data table
+tabeldf <- reactive({
+  if (input$pilkada1 == "provinsi") {
+    df <- dana_pilkada[["provinsi"]]
+    df <- df %>%
+      dplyr::select(-Kabupaten) %>%
+      dplyr::select(-`Nomor urut`)
+  } # data 1
+  else {
+    df <- dana_pilkada[["kabupaten"]]
+    df <- df %>%
+      dplyr::select(-`Nomor urut`)
+  } # data 2
+})
+
+# vis table
+renderDataTable({
+  datatable(tabeldf(), filter = list(position = 'top', clear = TRUE),
+            options = list(searching = TRUE, searchHighlight = TRUE, regex = TRUE,
+                           lengthMenu = list(c(4,5,-1), c('4',"5","All"))))
+})
+```
