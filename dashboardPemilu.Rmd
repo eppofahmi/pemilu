@@ -32,6 +32,7 @@ library(shinyalert)
 library(tidyverse)
 library(shinyjs)
 library(shinyBS)
+library(repmis)
 library(shiny)
 library(DT)
 ```
@@ -39,15 +40,11 @@ library(DT)
 
 ```{r global, include=FALSE}
 # data 1
-dana_pilkada <- readRDS("dana_pilkada.rds")
+dana_pilkada <- readRDS(gzcon(url("https://github.com/eppofahmi/pemilu/blob/master/data/dana_pilkada.rds?raw=true")))
 
 # data 2
-pilpres <- read_delim("pilpres.csv", ",", 
-    escape_double = FALSE)
+pilpres <- read_csv("https://raw.githubusercontent.com/eppofahmi/pemilu/master/data/pilpres.csv")
 
-# data 3
-# suara_partai <- read_csv("suara_partai.csv", 
-#     trim_ws = FALSE)
 ```
 
 LandingPage {.hidden data-orientation="rows"}
@@ -57,7 +54,7 @@ SideDK {data-height=190}
 -----------------------------------------------------------------------
 
 <div style="width:808; height:900">
-![](/Volumes/mydata/rSkilss/campaignABtest/lp.png)
+![](/Volumes/mydata/rSkilss/DashboardPemilu/landingpage.png)
 </div>
 
 Pilpres 2014 {data-orientation="rows" data-icon="glyphicon-folder-close"}
