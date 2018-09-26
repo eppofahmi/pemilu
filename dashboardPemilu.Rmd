@@ -1,13 +1,18 @@
 ---
 title: "Pemilihan Umum di Indonesia"
-output: 
-  flexdashboard::flex_dashboard:
-    social: [ "twitter", "facebook", "menu" ]
-    orientation: columns
-    vertical_layout: fill
-    favicon: hand-holding-vote-paper.png
-    theme: yeti
+resource_files:
+- landingpage.png
 runtime: shiny
+output:
+  flexdashboard::flex_dashboard:
+    favicon: hand-holding-vote-paper.png
+    orientation: columns
+    social:
+    - twitter
+    - facebook
+    - menu
+    theme: yeti
+    vertical_layout: fill
 ---
 
 <style>                     
@@ -54,7 +59,7 @@ SideDK {data-height=190}
 -----------------------------------------------------------------------
 
 <div style="width:808; height:900">
-![](/Volumes/mydata/rSkilss/DashboardPemilu/landingpage.png)
+![](https://raw.githubusercontent.com/eppofahmi/pemilu/master/landingpage.png)
 </div>
 
 Pilpres 2014 {data-orientation="rows" data-icon="glyphicon-folder-close"}
