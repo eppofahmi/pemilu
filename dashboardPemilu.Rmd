@@ -34,7 +34,10 @@ library(flexdashboard)
 library(highcharter)
 library(formattable)
 library(shinyalert)
-library(tidyverse)
+# library(tidyverse)
+library(dplyr)
+library(readr)
+# library(RCurl)
 library(shinyjs)
 library(shinyBS)
 library(repmis)
@@ -49,7 +52,6 @@ dana_pilkada <- readRDS(gzcon(url("https://github.com/eppofahmi/pemilu/blob/mast
 
 # data 2
 pilpres <- read_csv("https://raw.githubusercontent.com/eppofahmi/pemilu/master/data/pilpres.csv")
-
 ```
 
 LandingPage {.hidden data-orientation="rows"}
@@ -86,7 +88,6 @@ prabowo12 <- reactive({
   }
   
 })
-
 
 renderGauge(
   gauge(prabowo12(), min = 0, max = 20, symbol = "%", label = "Sig.Wil",
