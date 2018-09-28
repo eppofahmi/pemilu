@@ -57,10 +57,7 @@ pilpres <- read_csv("https://raw.githubusercontent.com/eppofahmi/pemilu/master/d
 LandingPage {.hidden data-orientation="rows"}
 =======================================================================
 
-SideDK {data-height=190}
------------------------------------------------------------------------
-
-<div style="width:808; height:900">
+<div style="width:450px; height:150px">
 ![](https://raw.githubusercontent.com/eppofahmi/pemilu/master/landingpage.png)
 </div>
 
@@ -295,6 +292,9 @@ renderHighchart({
         hc_add_theme(hc_theme_monokai()) %>%
         hc_plotOptions(series = list(stacking = "normal")) %>%
         hc_legend(enabled = FALSE) %>%
+        hc_credits(enabled = TRUE, text = paste0("Sumber: https//:myeda.info, diakses pada: ", 
+                                               as.character(Sys.Date())),
+                 href = "http://myeda.info/") %>%
         hc_exporting(enabled = TRUE, filename =  as.character(paste0(input$pilkada, "-", 
                                                                     input$filkab)))
     } 
@@ -313,6 +313,9 @@ renderHighchart({
         hc_add_theme(hc_theme_monokai()) %>%
         hc_plotOptions(series = list(stacking = "normal")) %>%
         hc_legend(enabled = FALSE) %>%
+        hc_credits(enabled = TRUE, text = paste0("Sumber: https//:myeda.info, diakses pada: ", 
+                                               as.character(Sys.Date())),
+                 href = "http://myeda.info/") %>%
         hc_exporting(enabled = TRUE, filename =  as.character(paste0(input$pilkada, "-", 
                                                                     input$filkab)))
     }
@@ -333,6 +336,9 @@ renderHighchart({
         hc_add_theme(hc_theme_monokai()) %>%
         hc_plotOptions(series = list(stacking = "normal")) %>%
         hc_legend(enabled = FALSE) %>%
+        hc_credits(enabled = TRUE, text = paste0("Sumber: https//:myeda.info, diakses pada: ", 
+                                               as.character(Sys.Date())),
+                 href = "http://myeda.info/") %>%
         hc_exporting(enabled = TRUE, filename = as.character(paste0(input$pilkada, "-", 
                                                                     input$filprov)))
     } 
@@ -348,6 +354,9 @@ renderHighchart({
                             color = Paslon)) %>%
         hc_add_theme(hc_theme_monokai()) %>%
         hc_legend(enabled = FALSE) %>%
+        hc_credits(enabled = TRUE, text = paste0("Sumber: https//:myeda.info, diakses pada: ", 
+                                               as.character(Sys.Date())),
+                 href = "http://myeda.info/") %>%
         hc_exporting(enabled = TRUE, filename =  as.character(paste0(input$pilkada, "-", 
                                                                     input$filprov)))
     }
