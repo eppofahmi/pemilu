@@ -47,9 +47,11 @@ library(DT)
 ```{r global, include=FALSE}
 # data 1
 dana_pilkada <- readRDS(gzcon(url("https://github.com/eppofahmi/pemilu/blob/master/data/dana_pilkada.rds?raw=true")))
-
 # data 2
 pilpres <- read_csv("https://raw.githubusercontent.com/eppofahmi/pemilu/master/data/pilpres.csv")
+
+# dana_pilkada <- read_rds("dana_pilkada.rds")
+# pilpres <- read_csv("data/pilpres.csv", trim_ws = FALSE)
 ```
 
 LandingPage {.hidden data-orientation="rows"}

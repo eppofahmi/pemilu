@@ -1,0 +1,10 @@
+name: dashboardpemilu
+title: dashboardpemilu
+username:
+account: myeda
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 468877
+bundleId: 1604733
+url: https://myeda.shinyapps.io/dashboardpemilu/
+when: 1537894122.27088
